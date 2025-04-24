@@ -42,10 +42,58 @@ df_out.to_csv("PredictedHeadlines.csv", index=False)
 print("\n✅ All predictions saved to PredictedHeadlines.csv")
 
 # === Optional: Show pie chart ===
+import matplotlib.pyplot as plt
+from collections import Counter
+
+# Count predicted categories
 counts = Counter(predicted_labels)
-plt.figure(figsize=(8, 6))
-plt.pie(counts.values(), labels=counts.keys(), autopct='%1.1f%%', startangle=140)
-plt.title("Predicted Headline Categories")
+labels, sizes = zip(*counts.items())
+
+# Sort categories by size descending
+sorted_pairs = sorted(zip(sizes, labels), reverse=True)
+sizes, labels = zip(*sorted_pairs)
+
+# Filter out categories < 3% and group them as 'Other'
+total = sum(sizes)
+filtered_labels = []
+filtered_sizes = []
+other_total = 0
+
+for label, size in zip(labels, sizes):
+    if size / total >= 0.03:
+        filtered_labels.append(label)
+        filtered_sizes.append(size)
+    else:
+        other_total += size
+
+if other_total > 0:
+    filtered_labels.append("Other")
+    filtered_sizes.append(other_total)
+
+# Explode largest slice
+explode = [0.08 if i == 0 else 0 for i in range(len(filtered_sizes))]
+
+# Create donut-style pie chart
+fig, ax = plt.subplots(figsize=(10, 7))
+wedges, texts, autotexts = ax.pie(
+    filtered_sizes,
+    labels=filtered_labels,
+    autopct="%1.1f%%",
+    startangle=140,
+    explode=explode,
+    textprops={"fontsize": 10},
+    wedgeprops=dict(width=0.4),
+    pctdistance=0.8
+)
+
+# Add center circle
+centre_circle = plt.Circle((0,0),0.70,fc='white')
+fig.gca().add_artist(centre_circle)
+
+# Style and layout
+plt.setp(autotexts, size=9, weight="bold", color="black")
+plt.title("Predicted Headline Categories (Filtered)", fontsize=14, fontweight="bold", y=1.02)
 plt.axis('equal')
 plt.tight_layout()
 plt.show()
+
