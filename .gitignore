@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+venv311/
+*.keras
+*.pkl
+*.csv
+*.json
+.DS_Store
