@@ -1,6 +1,7 @@
 # 📰 Headline Classifier
 
 A software system that scrapes real-world news headlines, classifies them into 42 HuffPost categories using a trained TensorFlow model, and visualizes the results — all powered by Python and software design patterns.
+ NOTE* This service requires Python 3.11. We recommend a venv to start
 
 ---
 
